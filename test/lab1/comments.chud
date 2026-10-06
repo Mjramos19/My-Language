@@ -1,0 +1,8 @@
+#AI Generated tests based on my CHUDS keywords, symbols, rules, etc.
+var score = 100;
+
+// this entire line should be ignored
+
+score = score + 25; // this comment should also be ignored
+
+print score;

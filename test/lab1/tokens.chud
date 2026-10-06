@@ -1,0 +1,9 @@
+#AI Generated tests based on my CHUDS keywords, symbols, rules, etc.
+( ) { } , ;
++ - * /
+= == ! !=
+< <= > >=
+
+var print if else while true false
+
+score player1 total_score

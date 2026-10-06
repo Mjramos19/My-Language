@@ -1,0 +1,6 @@
+#AI Generated tests based on my CHUDS keywords, symbols, rules, etc.
+var score = 100;
+@
+$
+#
+print score;

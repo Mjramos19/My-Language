@@ -1,0 +1,8 @@
+var lab1score = 100;
+var creator = "Michael";
+
+score = score + 25;
+
+if score >= 90 {
+    print "Michael gets an A!";
+}
