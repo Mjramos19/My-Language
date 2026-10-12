@@ -11,6 +11,7 @@ keywords = {
             }
 #-----------------------
 #wasnt sure what keywords i should have so i generated it
+
 class Token:
 
     #valid token: Token("NUMBER", "123.45", 123.45, 1)
