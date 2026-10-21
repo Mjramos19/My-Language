@@ -1,4 +1,6 @@
 import sys
+from parser import *
+from ast_printer import *
 #AI CODE----------------
 keywords = {
     "print" : "PRINT",
@@ -171,9 +173,9 @@ class Scanner:
             self.build_identifier()
 
 
-        #if all ifs pass and char is not of any significance, print an unexpected error 
+        #if all ifs pass and char is not of any significance, raise a syntax error
         else:
-            print(f"Error on line {self.line}: Unexpected character '{char}'")
+            raise SyntaxError(f"Unexpected character '{char}' on line {self.line}")
 
 
     #figuring out the format of and storing a number from source input as token
@@ -210,8 +212,8 @@ class Scanner:
 
         #if the end of the source is reached and still no closing parantheses, error: unterminated string
         if self.at_the_end():
-            print(f"Error on line {self.line}: Unterminated string.")
-            return
+            raise SyntaxError(f"Unterminated string on line {self.line}")
+            
 
         self.move_up()
 
@@ -224,7 +226,7 @@ class Scanner:
     def build_identifier(self):
 
         #move up while next character is alpha numeric or an underscore
-        while self.peek_current().isalnum() or self.peek_current == "_":
+        while self.peek_current().isalnum() or self.peek_current() == "_":
             self.move_up()
 
         #grab lexeme
@@ -260,15 +262,26 @@ number_pattern = r"\d+(\.\d+)?"
 
 
 def run(source):
-    #make scanner with source input
-    scanner = Scanner(source)
-    #find all tokens in source input using scanner
-    #tokens = list of tokens
-    tokens = scanner.find_tokens()
+    try:
+        #make scanner with source input
+        scanner = Scanner(source)
+        #find all tokens in source input using scanner
+        #tokens = list of tokens
+        tokens = scanner.find_tokens()
 
-    #loop through/print all tokens
-    for token in tokens:
-        print(token)
+        #make parser object with tokens list
+        parser = Parser(tokens)
+        #parse the tokens into an AST
+        expr = parser.parse()
+
+        #make ASTPrinter printer object
+        printer = ASTPrinter()
+        #print the finished AST using the printer
+        print(printer.print(expr))
+
+    #catches errors and avoids crashing
+    except SyntaxError as e:
+        print(f"Syntax Error: {e}")
 
 
 def run_file(filename):
@@ -294,4 +307,5 @@ def main():
     else:
         run_the_repl()
 
-main()
+if __name__ == "__main__":
+    main()
