@@ -1,6 +1,8 @@
 import sys
 from parser import *
 from ast_printer import *
+from interpreter import *
+
 #AI CODE----------------
 keywords = {
     "print" : "PRINT",
@@ -9,7 +11,8 @@ keywords = {
     "else" : "ELSE",
     "while" : "WHILE",
     "true" : "TRUE",
-    "false" : "FALSE"
+    "false" : "FALSE",
+    "nil" : "NIL"
             }
 #-----------------------
 #wasnt sure what keywords i should have so i generated it
@@ -271,13 +274,13 @@ def run(source):
 
         #make parser object with tokens list
         parser = Parser(tokens)
-        #parse the tokens into an AST
-        expr = parser.parse()
+        #parse the tokens into statements
+        statements = parser.parse()
 
-        #make ASTPrinter printer object
-        printer = ASTPrinter()
-        #print the finished AST using the printer
-        print(printer.print(expr))
+        #make interpreter object
+        interpreter = Interpreter()
+        #interpret statements
+        interpreter.interpret(statements)
 
     #catches errors and avoids crashing
     except SyntaxError as e:

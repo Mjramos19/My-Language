@@ -22,3 +22,14 @@ class Binary:
 class Grouping:
     def __init__(self, expression):
         self.expression = expression
+
+#stores an expression statement
+class ExpressionStmt:
+    def __init__(self, expression):
+        self.expression = expression
+
+
+#stores a print statement
+class PrintStmt:
+    def __init__(self, expression):
+        self.expression = expression

@@ -44,14 +44,18 @@ class Parser:
         return False
 
 
-    #main function for parsing tokens into the AST
+    #main function for parsing statements and handles syntax errors
     def parse(self):
-        expr = self.expression()
+        statements = []
 
-        if not self.at_the_end():
-            raise SyntaxError(f"Unexpected token '{self.peek_current().lexeme}' on line {self.peek_current().line}")
+        while not self.at_the_end():
+            try:
+                statements.append(self.statement())
+            except SyntaxError as e:
+                print(f"Syntax Error: {e}")
+                self.synchronize()
 
-        return expr
+        return statements
 
 
     
@@ -147,6 +151,10 @@ class Parser:
         if self.find_match("FALSE"):
             return Literal(False)
 
+        #if nil, make a literal with no value
+        if self.find_match("NIL"):
+            return Literal(None)
+
         #if we find a left parentheses, parse the expression and make a grouping node
         if self.find_match("LEFT_PAREN"):
             expr = self.expression()
@@ -159,3 +167,50 @@ class Parser:
 
         #if no token types are matched, raise a SyntaxError
         raise SyntaxError(f"Unexpected token '{self.peek_current().lexeme}' on line {self.peek_current().line}")
+
+    
+    #determines which type of statement to parse
+    def statement(self):
+
+        #print statement
+        if self.find_match("PRINT"):
+            return self.print_statement()
+
+        #otherwise it is an expression statement
+        return self.expression_statement()
+
+
+    #parses a print statement
+    def print_statement(self):
+        expr = self.expression()
+
+        if not self.find_match("SEMICOLON"):
+            raise SyntaxError(f"Expected ';' after print statement on line {self.peek_current().line}")
+
+        return PrintStmt(expr)
+
+
+    #parses an expression statement
+    def expression_statement(self):
+        expr = self.expression()
+
+        if not self.find_match("SEMICOLON"):
+            raise SyntaxError(f"Expected ';' after expression on line {self.peek_current().line}")
+
+        return ExpressionStmt(expr)
+
+
+    #skips tokens until the parser reaches the next statement
+    def synchronize(self):
+        while not self.at_the_end():
+            #semicolon marks the end of a statement
+            if self.peek_current().token_type == "SEMICOLON":
+                self.move_up()
+                return
+
+            #print marks the beginning of a new statement
+            if self.peek_current().token_type == "PRINT":
+                return
+
+            #otherwise skip the current token
+            self.move_up()
